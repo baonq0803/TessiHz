@@ -1,0 +1,13 @@
+node_modules/
+npm-debug.log
+server/tessihz.db
+server/tessihz.db-shm
+server/tessihz.db-wal
+server/data.json*
+.env
+.git/
+.gitignore
+*.md
+!README.md
+.idea/
+.vscode/

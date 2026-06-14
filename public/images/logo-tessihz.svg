@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="400" height="120">
+  <defs>
+    <!-- Metallic gradient for Hz -->
+    <linearGradient id="metallic" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6b7280"/>
+      <stop offset="40%" style="stop-color:#9ca3af"/>
+      <stop offset="70%" style="stop-color:#c8d6e5"/>
+      <stop offset="100%" style="stop-color:#9ca3af"/>
+    </linearGradient>
+
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Wave pattern -->
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6b7280;stop-opacity:0"/>
+      <stop offset="30%" style="stop-color:#9ca3af"/>
+      <stop offset="70%" style="stop-color:#c8d6e5"/>
+      <stop offset="100%" style="stop-color:#6b7280;stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle (optional) -->
+  <circle cx="60" cy="60" r="55" fill="none" stroke="url(#metallic)" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Sound wave visualization inside circle -->
+  <g opacity="0.6">
+    <!-- Center point -->
+    <circle cx="60" cy="60" r="3" fill="url(#metallic)"/>
+
+    <!-- Concentric wave rings -->
+    <circle cx="60" cy="60" r="15" fill="none" stroke="url(#waveGrad)" stroke-width="1.5" opacity="0.5"/>
+    <circle cx="60" cy="60" r="28" fill="none" stroke="url(#waveGrad)" stroke-width="1.2" opacity="0.4"/>
+    <circle cx="60" cy="60" r="40" fill="none" stroke="url(#waveGrad)" stroke-width="1" opacity="0.3"/>
+
+    <!-- Frequency bars -->
+    <rect x="35" y="30" width="4" height="16" rx="2" fill="url(#metallic)" opacity="0.6" transform="rotate(-15 37 38)"/>
+    <rect x="45" y="22" width="4" height="24" rx="2" fill="url(#metallic)" opacity="0.7" transform="rotate(-5 47 34)"/>
+    <rect x="55" y="18" width="4" height="30" rx="2" fill="url(#metallic)" opacity="0.8"/>
+    <rect x="65" y="22" width="4" height="24" rx="2" fill="url(#metallic)" opacity="0.7" transform="rotate(5 67 34)"/>
+    <rect x="75" y="30" width="4" height="16" rx="2" fill="url(#metallic)" opacity="0.6" transform="rotate(15 77 38)"/>
+  </g>
+
+  <!-- Hz text in circle -->
+  <text x="60" y="80" text-anchor="middle" font-family="'JetBrains Mono', 'Space Grotesk', monospace" font-size="16" font-weight="700" fill="url(#metallic)" filter="url(#glow)">Hz</text>
+
+  <!-- Tessi text -->
+  <text x="110" y="52" font-family="'Space Grotesk', 'DM Sans', system-ui, sans-serif" font-size="48" font-weight="700" fill="url(#metallic)" letter-spacing="-2">Tessi</text>
+
+  <!-- accent dot on i -->
+  <circle cx="168" cy="18" r="4" fill="url(#metallic)" filter="url(#glow)"/>
+
+  <!-- Underline accent -->
+  <line x1="110" y1="72" x2="240" y2="72" stroke="url(#metallic)" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+</svg>

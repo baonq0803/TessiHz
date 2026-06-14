@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Data & Secrets
+data.json*
+tessihz.db
+tessihz.db-shm
+tessihz.db-wal
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build
+dist/
+build/
+
+# Docker
+docker-compose.override.yml
+
+# Playwright test artifacts
+.playwright-mcp/

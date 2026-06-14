@@ -1,0 +1,22 @@
+{
+  "name": "phong-nghe-nhac",
+  "version": "1.0.0",
+  "description": "Phòng nghe nhạc chung cho bạn bè",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.10.1",
+    "cookie-session": "^2.1.1",
+    "dotenv": "^17.4.2",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.5.2",
+    "socket.io": "^4.7.4",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.3"
+  }
+}

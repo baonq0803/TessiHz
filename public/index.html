@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TessiHz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* ============================================
+           LANDING PAGE — REDESIGNED
+           ============================================ */
+
+        /* Animated canvas background */
+        #bg-canvas {
+            position: fixed; inset: 0; z-index: 0;
+            width: 100%; height: 100%;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 32px;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(30px) saturate(1.4);
+            -webkit-backdrop-filter: blur(30px) saturate(1.4);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            animation: navbarIn 1s var(--ease-out) forwards;
+        }
+        @keyframes navbarIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .navbar-brand {
+            display: flex; align-items: center; gap: 12px;
+            font-family: var(--font-sans); font-weight: 700;
+            font-size: 1.1rem; color: var(--ink); letter-spacing: -0.04em;
+            text-shadow: 0 0 30px rgba(200,214,229,0.2);
+        }
+        .navbar-brand .logo-icon {
+            width: 38px; height: 38px; border-radius: 12px;
+            background: var(--grad-metallic);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 32px rgba(163,177,192,0.2);
+            animation: logoFloat 4s ease-in-out infinite;
+        }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-4px) rotate(2deg); }
+        }
+        .navbar-actions { display: flex; gap: 10px; }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center; padding: 100px 24px 80px;
+            position: relative; z-index: 1;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 10px 22px; border-radius: var(--r-full);
+            background: rgba(163,177,192,0.06);
+            border: 1px solid rgba(163,177,192,0.15);
+            color: var(--silver-light); font-size: 0.82rem; font-weight: 500;
+            margin-bottom: 32px;
+            animation: fadeSlideUp 0.8s 0.2s var(--ease-out) both;
+            box-shadow: 0 0 40px rgba(163,177,192,0.05);
+        }
+        .hero-badge .dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 12px var(--green);
+            animation: pip 2s ease-in-out infinite;
+        }
+        .hero h1 {
+            font-family: var(--font-sans); font-weight: 700;
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            letter-spacing: -0.06em; line-height: 1.0;
+            background: linear-gradient(135deg, #e2e8f0 0%, #9ca3af 40%, #c8d6e5 60%, #e2e8f0 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            margin-bottom: 20px;
+            animation: fadeSlideUp 0.8s 0.3s var(--ease-out) both, shimmerText 4s linear infinite;
+        }
+        @keyframes shimmerText {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        .hero-subtitle {
+            color: var(--ink-2); font-size: 1.1rem; max-width: 540px;
+            line-height: 1.7; margin-bottom: 44px; font-weight: 400;
+            animation: fadeSlideUp 0.8s 0.4s var(--ease-out) both;
+        }
+        .hero-actions {
+            display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+            animation: fadeSlideUp 0.8s 0.5s var(--ease-out) both;
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero .btn-primary {
+            padding: 16px 44px; font-size: 0.95rem;
+            box-shadow: 0 8px 40px rgba(163,177,192,0.25);
+            position: relative; overflow: hidden;
+        }
+        .hero .btn-primary::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent 50%);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .hero .btn-primary:hover::before { opacity: 1; }
+        .hero .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 60px rgba(163,177,192,0.4);
+        }
+        .hero .btn-secondary {
+            padding: 16px 44px; font-size: 0.95rem;
+        }
+        .hero .btn-secondary:hover {
+            transform: translateY(-3px) scale(1.02);
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        /* Floating music notes decoration */
+        .floating-notes {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+        }
+        .music-note {
+            position: absolute; font-size: 1.5rem; opacity: 0;
+            animation: noteFloat linear infinite;
+        }
+        .music-note:nth-child(1) { left: 5%; animation-duration: 18s; animation-delay: 0s; }
+        .music-note:nth-child(2) { left: 15%; animation-duration: 22s; animation-delay: -3s; font-size: 1.2rem; }
+        .music-note:nth-child(3) { left: 28%; animation-duration: 20s; animation-delay: -6s; font-size: 1.8rem; }
+        .music-note:nth-child(4) { left: 42%; animation-duration: 25s; animation-delay: -2s; }
+        .music-note:nth-child(5) { left: 55%; animation-duration: 19s; animation-delay: -8s; font-size: 1.3rem; }
+        .music-note:nth-child(6) { left: 68%; animation-duration: 23s; animation-delay: -4s; font-size: 1.6rem; }
+        .music-note:nth-child(7) { left: 78%; animation-duration: 21s; animation-delay: -10s; }
+        .music-note:nth-child(8) { left: 88%; animation-duration: 17s; animation-delay: -1s; font-size: 1.4rem; }
+        .music-note:nth-child(9) { left: 35%; animation-duration: 24s; animation-delay: -12s; font-size: 1.1rem; }
+        .music-note:nth-child(10) { left: 62%; animation-duration: 20s; animation-delay: -7s; font-size: 1.7rem; }
+        @keyframes noteFloat {
+            0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10%  { opacity: 0.15; }
+            90%  { opacity: 0.15; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Features */
+        .features {
+            padding: 100px 32px 120px; position: relative; z-index: 1;
+        }
+        .features .container { max-width: 1100px; margin: 0 auto; }
+        .features-header {
+            text-align: center; margin-bottom: 64px;
+            animation: fadeSlideUp 0.8s var(--ease-out) both;
+        }
+        .features-label {
+            color: var(--ink-4); font-size: 0.75rem; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 14px;
+        }
+        .features-header h2 {
+            font-family: var(--font-sans); font-weight: 700;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            letter-spacing: -0.05em; color: var(--ink);
+            line-height: 1.15;
+        }
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            padding: 36px 30px; border-radius: var(--r-xl);
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.5s var(--ease-out);
+            position: relative; overflow: hidden;
+            animation: fadeSlideUp 0.8s var(--ease-out) both;
+        }
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            opacity: 0; transition: opacity 0.5s;
+        }
+        .feature-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(163,177,192,0.06) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        .feature-card:hover::before,
+        .feature-card:hover::after { opacity: 1; }
+        .feature-card:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 24px 80px rgba(0,0,0,0.4), 0 0 100px rgba(163,177,192,0.06);
+        }
+        .feature-icon {
+            width: 56px; height: 56px; border-radius: 16px;
+            background: rgba(163,177,192,0.08);
+            border: 1px solid rgba(163,177,192,0.12);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 22px;
+            box-shadow: 0 0 30px rgba(163,177,192,0.05);
+            transition: all 0.5s var(--ease-out);
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(-3deg);
+            box-shadow: 0 0 50px rgba(163,177,192,0.12);
+            background: rgba(163,177,192,0.12);
+        }
+        .feature-card h3 {
+            font-family: var(--font-sans); font-weight: 600;
+            font-size: 1.1rem; letter-spacing: -0.03em;
+            margin-bottom: 10px; color: var(--ink);
+        }
+        .feature-card p {
+            color: var(--ink-3); font-size: 0.92rem; line-height: 1.65;
+        }
+
+        /* Stats section */
+        .stats-section {
+            padding: 60px 32px 100px; position: relative; z-index: 1;
+        }
+        .stats-section .container { max-width: 800px; margin: 0 auto; }
+        .stats-grid {
+            display: flex; justify-content: center; gap: 60px; flex-wrap: wrap;
+            animation: fadeSlideUp 0.8s var(--ease-out) both;
+        }
+        .stat-item { text-align: center; }
+        .stat-number {
+            font-family: var(--font-sans); font-weight: 700;
+            font-size: 2.5rem; letter-spacing: -0.04em;
+            background: var(--grad-text);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            line-height: 1.2;
+        }
+        .stat-label {
+            color: var(--ink-4); font-size: 0.82rem;
+            text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
+            margin-top: 6px;
+        }
+
+        /* Footer */
+        .landing-footer {
+            padding: 50px 32px; text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            color: var(--ink-4); font-size: 0.82rem;
+            position: relative; z-index: 1;
+            background: linear-gradient(180deg, transparent, rgba(0,0,0,0.3));
+        }
+        .landing-footer .footer-brand {
+            font-family: var(--font-sans); font-weight: 600;
+            font-size: 1rem; color: var(--ink-3); margin-bottom: 8px;
+        }
+
+        /* ========== AUTH MODALS ========== */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 200;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            align-items: center; justify-content: center;
+            padding: 24px;
+        }
+        .modal-overlay.active { display: flex; animation: overlayIn 0.3s var(--ease-out) forwards; }
+        @keyframes overlayIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .auth-modal {
+            width: 100%; max-width: 420px;
+            padding: 44px 40px; border-radius: var(--r-2xl);
+            background: rgba(18,20,26,0.95);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(60px);
+            -webkit-backdrop-filter: blur(60px);
+            animation: modalIn 0.5s var(--ease-out) forwards;
+            position: relative;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 120px rgba(163,177,192,0.04);
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .auth-modal::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        }
+        .auth-modal .close-btn {
+            position: absolute; top: 16px; right: 16px;
+            width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+            color: var(--ink-3); font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s var(--ease-out);
+        }
+        .auth-modal .close-btn:hover {
+            background: rgba(255,255,255,0.1); color: var(--ink);
+            transform: rotate(90deg);
+        }
+        .auth-modal .modal-logo {
+            width: 52px; height: 52px; border-radius: 16px;
+            background: var(--grad-metallic);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; margin-bottom: 22px;
+            box-shadow: 0 8px 32px rgba(163,177,192,0.2);
+        }
+        .auth-modal h2 {
+            font-family: var(--font-sans); font-weight: 700;
+            font-size: 1.6rem; letter-spacing: -0.04em;
+            margin-bottom: 6px; color: var(--ink);
+        }
+        .auth-modal .modal-subtitle {
+            color: var(--ink-3); font-size: 0.92rem; margin-bottom: 28px;
+        }
+        .auth-error {
+            padding: 12px 16px; border-radius: var(--r-full);
+            background: rgba(248,113,113,0.08);
+            border: 1px solid rgba(248,113,113,0.12);
+            color: #fca5a5; font-size: 0.82rem; font-weight: 500;
+            margin-bottom: 16px; display: none; text-align: center;
+            animation: shakeIn 0.4s var(--ease-out);
+        }
+        .auth-error.show { display: block; }
+        @keyframes shakeIn {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .auth-success {
+            padding: 12px 16px; border-radius: var(--r-full);
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.12);
+            color: #86efac; font-size: 0.82rem; font-weight: 500;
+            margin-bottom: 16px; display: none; text-align: center;
+        }
+        .auth-switch {
+            text-align: center; margin-top: 22px;
+            color: var(--ink-3); font-size: 0.88rem;
+        }
+        .auth-switch span {
+            color: var(--silver-light); cursor: pointer;
+            font-weight: 600; transition: all 0.2s var(--ease-out);
+        }
+        .auth-switch span:hover {
+            color: var(--ink);
+            text-shadow: 0 0 20px rgba(200,214,229,0.3);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 16px; }
+            .hero { padding-top: 80px; }
+            .features { padding: 60px 20px 80px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .stats-grid { gap: 32px; }
+            .stat-number { font-size: 2rem; }
+            .auth-modal { padding: 32px 24px; }
+            .hero h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== VIDEO BACKGROUND ========== -->
+<div class="bg-videos">
+    <video muted autoplay loop playsinline preload="auto" src="/images/vid-landing.mp4"></video>
+</div>
+
+<!-- ========== ANIMATED BACKGROUND ========== -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Floating music notes -->
+<div class="floating-notes">
+    <span class="music-note">♪</span>
+    <span class="music-note">♫</span>
+    <span class="music-note">♬</span>
+    <span class="music-note">♪</span>
+    <span class="music-note">♩</span>
+    <span class="music-note">♫</span>
+    <span class="music-note">♪</span>
+    <span class="music-note">♬</span>
+    <span class="music-note">♩</span>
+    <span class="music-note">♪</span>
+</div>
+
+<!-- Background effects -->
+<div class="bg-scenes"><div class="bg-scene"></div><div class="bg-scene"></div><div class="bg-scene"></div></div>
+<div class="bg-orbs">
+    <div class="bg-orb"></div><div class="bg-orb"></div><div class="bg-orb"></div>
+    <div class="bg-orb"></div><div class="bg-orb"></div>
+</div>
+<div class="bg-particles">
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
+</div>
+<div class="ambient-bg"></div>
+<div class="ambient-grid"></div>
+
+<!-- ========== LANDING PAGE ========== -->
+<div class="landing-page">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <img src="/images/logo-tessihz.svg" alt="TessiHz" class="navbar-logo">
+        </div>
+        <div class="navbar-actions">
+            <button class="btn btn-secondary" onclick="showAuthModal('login')" style="padding: 9px 24px; font-size: 0.85rem;">Đăng nhập</button>
+            <button class="btn btn-primary" onclick="showAuthModal('register')" style="padding: 9px 24px; font-size: 0.85rem;">Đăng ký</button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="dot"></span>
+            Nghe nhạc cùng bạn bè — miễn phí
+        </div>
+        <h1>TessiHz<br>cùng bạn bè</h1>
+        <p class="hero-subtitle">Tạo phòng nhạc riêng, mời bạn bè vào, cùng nghe nhạc và trò chuyện thời gian thực. Không cần đăng ký phức tạp.</p>
+        <div class="hero-actions">
+            <button class="btn btn-primary" onclick="showAuthModal('register')">
+                🚀 Bắt đầu ngay
+            </button>
+            <button class="btn btn-secondary" onclick="showAuthModal('login')">
+                Đăng nhập
+            </button>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="container">
+            <div class="features-header">
+                <div class="features-label">Tính năng</div>
+                <h2>Mọi thứ bạn cần để<br>nghe nhạc cùng nhau</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card" onmousemove="trackMouse(event, this)">
+                    <div class="feature-icon">🎵</div>
+                    <h3>Phát nhạc đồng bộ</h3>
+                    <p>Ai trong phòng cũng nghe cùng một bài, cùng một thời điểm. Như đang ở cùng một căn phòng.</p>
+                </div>
+                <div class="feature-card" onmousemove="trackMouse(event, this)">
+                    <div class="feature-icon">💬</div>
+                    <h3>Chat thời gian thực</h3>
+                    <p>Trò chuyện, gợi ý bài hát, cảm xúc — tất cả hiện ngay mà không cần chờ đợi.</p>
+                </div>
+                <div class="feature-card" onmousemove="trackMouse(event, this)">
+                    <div class="feature-icon">📋</div>
+                    <h3>Hàng đợi nhạc</h3>
+                    <p>Thêm bài hát vào hàng đợi, bỏ phiếu skip, tự động chuyển bài. Nghe nhạc không bị gián đoạn.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Phòng nhạc</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">🎵</div>
+                    <div class="stat-label">YouTube</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">⚡</div>
+                    <div class="stat-label">Real-time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">🆓</div>
+                    <div class="stat-label">Miễn phí</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="footer-brand">TessiHz</div>
+        <p>Nghe nhạc cùng bạn bè</p>
+    </footer>
+</div>
+
+<!-- ========== AUTH MODALS ========== -->
+<div class="modal-overlay" id="login-modal">
+    <div class="auth-modal">
+        <button class="close-btn" onclick="closeAuthModal()">✕</button>
+        <div class="modal-logo">🎵</div>
+        <h2>Đăng nhập</h2>
+        <p class="modal-subtitle">Chào mừng trở lại!</p>
+        <div class="auth-error" id="login-error"></div>
+        <form onsubmit="doLogin(event)">
+            <div class="form-group">
+                <label class="form-label">Tên đăng nhập</label>
+                <input type="text" class="form-input" id="login-username" placeholder="Nhập tên đăng nhập" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                <input type="password" class="form-input" id="login-password" placeholder="Nhập mật khẩu" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary auth-btn" style="width: 100%; margin-top: 10px; padding: 14px;">Đăng nhập</button>
+        </form>
+        <div style="text-align: right; margin-bottom: 14px;">
+            <a onclick="showForgotPassword()" style="font-size: 0.78rem; color: var(--ink-3); cursor: pointer; font-family: var(--font-body); transition: color 0.2s;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--ink-3)'">Quên mật khẩu?</a>
+        </div>
+        <div class="auth-switch">
+            Chưa có tài khoản? <span onclick="showAuthModal('register')">Đăng ký ngay</span>
+        </div>
+    </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal-overlay" id="forgot-modal">
+    <div class="auth-modal">
+        <button class="close-btn" onclick="closeForgotModal()">✕</button>
+        <div class="modal-logo">🔑</div>
+        <h2>Quên mật khẩu?</h2>
+        <p class="modal-subtitle">Nhập tên đăng nhập để yêu cầu reset</p>
+        <div class="auth-error" id="forgot-error"></div>
+        <div class="auth-success" id="forgot-success"></div>
+        <form onsubmit="doForgotPassword(event)">
+            <div class="form-group">
+                <label class="form-label">Tên đăng nhập</label>
+                <input type="text" class="form-input" id="forgot-username" placeholder="Nhập tên đăng nhập" required>
+            </div>
+            <button type="submit" class="btn btn-primary auth-btn" style="width: 100%; margin-top: 10px; padding: 14px;">Gửi yêu cầu</button>
+        </form>
+        <div class="auth-switch">
+            Nhớ mật khẩu rồi? <span onclick="closeForgotModal(); showAuthModal('login')">Đăng nhập</span>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="register-modal">
+    <div class="auth-modal">
+        <button class="close-btn" onclick="closeAuthModal()">✕</button>
+        <div class="modal-logo">🎵</div>
+        <h2>Tạo tài khoản</h2>
+        <p class="modal-subtitle">Miễn phí, chỉ mất 10 giây</p>
+        <div class="auth-error" id="register-error"></div>
+        <div class="auth-success" id="register-success"></div>
+        <form onsubmit="doRegister(event)">
+            <div class="form-group">
+                <label class="form-label">Tên đăng nhập</label>
+                <input type="text" class="form-input" id="reg-username" placeholder="khong dau, khong khoang trang" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tên hiển thị</label>
+                <input type="text" class="form-input" id="reg-display" placeholder="Tên bạn muốn người khác thấy">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                <input type="password" class="form-input" id="reg-password" placeholder="Ít nhất 6 ký tự" required minlength="6">
+            </div>
+            <button type="submit" class="btn btn-primary auth-btn" style="width: 100%; margin-top: 10px; padding: 14px;">Đăng ký</button>
+        </form>
+        <div class="auth-switch">
+            Đã có tài khoản? <span onclick="showAuthModal('login')">Đăng nhập</span>
+        </div>
+    </div>
+</div>
+
+<script>
+// === CANVAS BACKGROUND (Particles) ===
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let w, h;
+
+function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+    constructor() { this.reset(); }
+    reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.size = Math.random() * 2 + 0.5;
+        this.opacity = Math.random() * 0.4 + 0.1;
+        this.hue = Math.random() < 0.5 ? 210 : 260;
+    }
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > w) this.vx *= -1;
+        if (this.y < 0 || this.y > h) this.vy *= -1;
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue}, 20%, 70%, ${this.opacity})`;
+        ctx.fill();
+    }
+}
+
+for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+function drawLines() {
+    for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = `rgba(163,177,192,${0.06 * (1 - dist / 120)})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => { p.update(); p.draw(); });
+    drawLines();
+    requestAnimationFrame(animate);
+}
+animate();
+
+// === FEATURE CARD MOUSE TRACKING ===
+function trackMouse(e, el) {
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    el.style.setProperty('--mx', x + '%');
+    el.style.setProperty('--my', y + '%');
+}
+
+// === AUTH MODALS ===
+function showAuthModal(type) {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.auth-error').forEach(e => e.classList.remove('show'));
+    if (type === 'login') document.getElementById('login-modal').classList.add('active');
+    else document.getElementById('register-modal').classList.add('active');
+}
+function closeAuthModal() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeAuthModal();
+    });
+});
+
+async function doLogin(e) {
+    e.preventDefault();
+    const errorEl = document.getElementById('login-error');
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value;
+    const res = await fetch('/api/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+        errorEl.textContent = data.message;
+        errorEl.classList.add('show');
+        return;
+    }
+    window.location.href = '/app';
+}
+
+async function doRegister(e) {
+    e.preventDefault();
+    const errorEl = document.getElementById('register-error');
+    const successEl = document.getElementById('register-success');
+    const username = document.getElementById('reg-username').value.trim();
+    const displayName = document.getElementById('reg-display').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const res = await fetch('/api/register', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, displayName })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+        errorEl.textContent = data.message;
+        errorEl.classList.add('show');
+        return;
+    }
+    successEl.textContent = '✓ Đăng ký thành công! Đang chuyển...';
+    successEl.style.display = 'block';
+    successEl.style.color = '#86efac';
+    setTimeout(() => { window.location.href = '/app'; }, 1000);
+}
+
+// === FORGOT PASSWORD ===
+function showForgotPassword() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    document.getElementById('forgot-modal').classList.add('active');
+}
+function closeForgotModal() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+}
+
+async function doForgotPassword(e) {
+    e.preventDefault();
+    const errorEl = document.getElementById('forgot-error');
+    const successEl = document.getElementById('forgot-success');
+    const username = document.getElementById('forgot-username').value.trim();
+
+    errorEl.classList.remove('show');
+    successEl.classList.remove('show');
+
+    try {
+        const res = await fetch('/api/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+
+        successEl.textContent = data.message;
+        successEl.classList.add('show');
+
+        // Show dev token in console for testing
+        if (data._devUrl) {
+            console.log('🔑 Reset link (dev):', data._devUrl);
+        }
+    } catch {
+        errorEl.textContent = 'Có lỗi xảy ra!';
+        errorEl.classList.add('show');
+    }
+}
+</script>
+
+</body>
+</html>
