@@ -1,5 +1,5 @@
 // ============================================
-//  TessiHz — SERVER (v3.2 — SQLite Migration)
+//  TessiHz — SERVER (v3.3 — Stable)
 // ============================================
 
 require('dotenv').config();
@@ -148,7 +148,6 @@ app.post('/api/register', authLimiter, async (req, res) => {
       return res.json({ ok: false, message: strength.message });
     }
 
-    // Check duplicate
     const existing = dbLayer.findUserByUsername(validUsername);
     if (existing) {
       return res.json({ ok: false, message: 'Tên này đã có người dùng rồi!' });
@@ -169,7 +168,6 @@ app.post('/api/register', authLimiter, async (req, res) => {
       resetTokenExpiry: null,
     });
 
-    // Auto-login: find the user we just created
     const newUser = dbLayer.findUserByUsername(validUsername);
     req.session.userId = newUser.id;
 
@@ -254,13 +252,11 @@ app.post('/api/forgot-password', resetLimiter, (req, res) => {
   dbLayer.setResetToken(user.id, resetToken, expiry);
 
   const resetUrl = `http://localhost:${PORT}/reset-password?token=${resetToken}`;
-  console.log(`\n🔑 PASSWORD RESET cho "${user.username}":`);
-  console.log(`   Link: ${resetUrl}`);
-  console.log(`   Hết hạn: ${expiry}\n`);
+  console.log(`\n🔑 PASSWORD RESET cho "${user.username}": ${resetUrl}\n`);
 
   return res.json({
     ok: true,
-    message: 'Nếu tên đăng nhập tồn tại, link reset đã được tạo. Kiểm tra console server.',
+    message: 'Nếu tên đăng nhập tồn tại, link reset đã được tạo.',
     ...(NODE_ENV !== 'production' && { _devToken: resetToken, _devUrl: resetUrl })
   });
 });
@@ -288,9 +284,8 @@ app.post('/api/reset-password', resetLimiter, async (req, res) => {
     return res.json({ ok: false, message: 'Token không hợp lệ!' });
   }
 
-  // Check expiry
   if (user.resetTokenExpiry && new Date(user.resetTokenExpiry) < new Date()) {
-    dbLayer.setResetToken(user.id, null, null); // Clear expired token
+    dbLayer.setResetToken(user.id, null, null);
     return res.json({ ok: false, message: 'Link reset đã hết hạn!' });
   }
 
@@ -376,7 +371,6 @@ app.post('/api/rooms', requireAuth, generalLimiter, (req, res) => {
   let roomId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   if (!roomId) roomId = uuidv4().slice(0, 8);
 
-  // Check duplicate roomId
   if (dbLayer.getRoomById(roomId)) {
     roomId = roomId + '-' + uuidv4().slice(0, 4);
   }
@@ -391,7 +385,6 @@ app.post('/api/rooms', requireAuth, generalLimiter, (req, res) => {
     bannedUsers: [],
   });
 
-  // Init room state
   dbLayer.saveRoomState(roomId, { videoId: '', playing: false, currentTime: 0, queue: [] });
 
   return res.json({ ok: true, room: { id: roomId, name, description, isPrivate } });
@@ -506,7 +499,6 @@ app.post('/api/room/:roomId/ban', requireAuth, generalLimiter, (req, res) => {
     }
   }
 
-  // Update bannedUsers
   const banned = [...(room.bannedUsers || [])];
   if (!banned.includes(userId)) {
     banned.push(userId);
@@ -590,14 +582,13 @@ const socketEventCounts = new Map();
 function getRoom(roomId) {
   if (!rooms[roomId]) {
     const room = { users: [], videoId: '', playing: false, currentTime: 0, queue: [] };
-    // Restore state từ DB
     const saved = dbLayer.getRoomState(roomId);
     if (saved) {
       room.videoId = saved.videoId;
       room.playing = saved.playing;
       room.currentTime = saved.currentTime;
       room.queue = saved.queue;
-      console.log(`📦 Restored room "${roomId}": ${saved.queue.length} items in queue, video=${saved.videoId || 'none'}`);
+      console.log(`📦 Restored room "${roomId}": ${saved.queue.length} items in queue`);
     }
     rooms[roomId] = room;
   }
@@ -637,7 +628,6 @@ io.on('connection', (socket) => {
     const room = getRoom(roomId);
     const user = { id: socket.id, name: safeUsername };
 
-    // Check ban from persistent storage
     const persistentRoom = dbLayer.getRoomById(roomId);
     if (persistentRoom?.bannedUsers?.includes(user.id)) {
       socket.emit('banned-from-room', { message: 'Bạn đã bị ban khỏi phòng này!' });
@@ -801,21 +791,18 @@ function findUser(socketId, roomId) {
 //  START
 // ============================================
 server.listen(PORT, () => {
-  // Auto-migrate from data.json if SQLite is empty
   const userCount = dbLayer.getAllUsers().length;
   if (userCount === 0 && fs.existsSync(path.join(__dirname, 'data.json'))) {
     console.log('📦 Phát hiện data.json — đang migrate sang SQLite...');
     const ok = dbLayer.migrateFromJson();
     if (ok) {
-      // Backup data.json
-      const fs = require('fs');
       fs.renameSync(path.join(__dirname, 'data.json'), path.join(__dirname, 'data.json.backup'));
-      console.log('✅ Migration xong! data.json đã backup → data.json.backup');
+      console.log('✅ Migration xong! data.json → data.json.backup');
     }
   }
 
   console.log(`
-  🎵 TessiHz v3.2 đã chạy! (${NODE_ENV}) — SQLite
+  🎵 TessiHz v3.3 đã chạy! (${NODE_ENV})
   📍 Đăng nhập:     http://localhost:${PORT}/login
   📍 Trang chính:   http://localhost:${PORT}/app
   📌 Nhấn Ctrl+C để dừng
