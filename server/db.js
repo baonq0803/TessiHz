@@ -6,7 +6,10 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const { existsSync, readFileSync, unlinkSync } = require('fs');
 
-const DB_PATH = path.join(__dirname, 'tessihz.db');
+// Render / các platform có filesystem read-only → dùng /tmp
+// Local dev: dùng thư mục project
+const isProduction = process.env.NODE_ENV === 'production';
+const DB_PATH = process.env.DATABASE_URL || (isProduction ? '/tmp/tessihz.db' : path.join(__dirname, 'tessihz.db'));
 const DATA_FILE = path.join(__dirname, 'data.json');
 
 // --- Init Database ---

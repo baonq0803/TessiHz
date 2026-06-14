@@ -23,7 +23,7 @@ COPY server/ ./server/
 COPY public/ ./public/
 
 # Create data directory
-RUN mkdir -p /app/server/data
+RUN mkdir -p /app/server/data /tmp
 
 # Expose port
 EXPOSE 3000
