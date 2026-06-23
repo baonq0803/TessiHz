@@ -8,11 +8,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV:-development}
       - PORT=3000
-      - SESSION_SECRET=${SESSION_SECRET}
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-https://tessihz.onrender.com}
-      - COOKIE_DOMAIN=${COOKIE_DOMAIN:-.onrender.com}
+      - SESSION_SECRET=${SESSION_SECRET:-phong-nghe-nhac-secret}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001}
+      - COOKIE_DOMAIN=${COOKIE_DOMAIN:-}
       - DATABASE_URL=/tmp/tessihz.db
     volumes:
       - ./server/data:/tmp

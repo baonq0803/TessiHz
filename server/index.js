@@ -106,12 +106,12 @@ const io = new Server(server, {
 app.use(express.json({ limit: '10kb' }));
 app.use(express.static(path.join(__dirname, '../public')));
 
+app.set('trust proxy', 1);
 app.use(session({
   name: 'tessihz_session',
   keys: [SESSION_SECRET],
   maxAge: 7 * 24 * 60 * 60 * 1000,
   httpOnly: true,
-  secure: NODE_ENV === 'production',
   sameSite: 'lax',
   domain: process.env.COOKIE_DOMAIN || undefined,
 }));
