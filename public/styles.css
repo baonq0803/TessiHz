@@ -68,6 +68,7 @@ h3 { font-size: clamp(1.1rem, 2vw, 1.4rem); }
     rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
     rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
 }
 
