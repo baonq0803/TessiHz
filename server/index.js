@@ -474,6 +474,17 @@ app.post('/api/room/:roomId/kick', requireAuth, generalLimiter, (req, res) => {
       rooms[roomId].users.splice(idx, 1);
       io.to(roomId).emit('user-left', kicked);
       io.to(roomId).emit('user-list', rooms[roomId].users);
+
+      const targetSocket = io.sockets.sockets.get(userId);
+      if (targetSocket) {
+        targetSocket.leave(roomId);
+      }
+
+      if (rooms[roomId].users.length === 0) {
+        persistRoomState(roomId);
+        delete rooms[roomId];
+        console.log(`🧹 Dọn dẹp phòng trống "${roomId}" khỏi bộ nhớ (sau khi kick)`);
+      }
     }
   }
 
@@ -496,6 +507,17 @@ app.post('/api/room/:roomId/ban', requireAuth, generalLimiter, (req, res) => {
     if (idx !== -1) {
       rooms[roomId].users.splice(idx, 1);
       io.to(roomId).emit('user-list', rooms[roomId].users);
+
+      const targetSocket = io.sockets.sockets.get(userId);
+      if (targetSocket) {
+        targetSocket.leave(roomId);
+      }
+
+      if (rooms[roomId].users.length === 0) {
+        persistRoomState(roomId);
+        delete rooms[roomId];
+        console.log(`🧹 Dọn dẹp phòng trống "${roomId}" khỏi bộ nhớ (sau khi ban)`);
+      }
     }
   }
 
@@ -582,13 +604,17 @@ const socketEventCounts = new Map();
 function getRoom(roomId) {
   if (!rooms[roomId]) {
     const room = { users: [], videoId: '', playing: false, currentTime: 0, queue: [] };
-    const saved = dbLayer.getRoomState(roomId);
-    if (saved) {
-      room.videoId = saved.videoId;
-      room.playing = saved.playing;
-      room.currentTime = saved.currentTime;
-      room.queue = saved.queue;
-      console.log(`📦 Restored room "${roomId}": ${saved.queue.length} items in queue`);
+    try {
+      const saved = dbLayer.getRoomState(roomId);
+      if (saved) {
+        room.videoId = saved.videoId;
+        room.playing = saved.playing;
+        room.currentTime = saved.currentTime;
+        room.queue = saved.queue;
+        console.log(`📦 Restored room "${roomId}": ${saved.queue.length} items in queue`);
+      }
+    } catch (err) {
+      console.error(`Lỗi lấy state phòng ${roomId}:`, err);
     }
     rooms[roomId] = room;
   }
@@ -598,12 +624,16 @@ function getRoom(roomId) {
 function persistRoomState(roomId) {
   const room = rooms[roomId];
   if (!room) return;
-  dbLayer.saveRoomState(roomId, {
-    videoId: room.videoId,
-    playing: room.playing,
-    currentTime: room.currentTime,
-    queue: room.queue,
-  });
+  try {
+    dbLayer.saveRoomState(roomId, {
+      videoId: room.videoId,
+      playing: room.playing,
+      currentTime: room.currentTime,
+      queue: room.queue,
+    });
+  } catch (err) {
+    console.error(`Lỗi lưu state phòng ${roomId}:`, err);
+  }
 }
 
 function checkSocketRateLimit(socketId) {
@@ -772,6 +802,12 @@ io.on('connection', (socket) => {
         io.to(roomId).emit('user-left', user);
         io.to(roomId).emit('user-list', room.users);
         console.log(`👋 ${user.name} rời phòng "${roomId}"`);
+
+        if (room.users.length === 0) {
+          persistRoomState(roomId);
+          delete rooms[roomId];
+          console.log(`🧹 Dọn dẹp phòng trống "${roomId}" khỏi bộ nhớ`);
+        }
         break;
       }
     }
